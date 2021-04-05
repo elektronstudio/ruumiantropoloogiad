@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+      rel="stylesheet"
+    />
+    <link href="http://elektron.art/lib/style.css" rel="stylesheet" />
+  </head>
+  <body>
+    <div id="app" v-cloak>
+      <layout>
+        <vertical style="padding: 32px">
+          <!-- <video-stream
+            :src="formatStreamUrl(eventid)"
+            style="width: 100%"
+          ></video-stream> -->
+          <div style="overflow: auto; height: 67vh">
+            <div
+              style="
+                display: grid;
+                grid-template-columns: repeat(6, 1fr);
+                overflow: auto;
+              "
+            >
+              <transition-group name="slide">
+                <div
+                  v-for="i in 238"
+                  :key="i"
+                  @click="activeSnapshot = i"
+                  class="cursor: pointer"
+                >
+                  <img
+                    :src="
+                      'https://elektron.fra1.digitaloceanspaces.com/snapshots/' +
+                      i +
+                      '.jpg'
+                    "
+                    style="width: 100%"
+                  />
+                </div>
+              </transition-group>
+            </div>
+            <img
+              v-for="j in 3"
+              :key="j"
+              :src="
+                'https://elektron.fra1.digitaloceanspaces.com/snapshots/archive' +
+                j +
+                '.jpg'
+              "
+              style="width: 100%"
+            />
+          </div>
+          <p />
+          <h1>{{ event?.title }}</h1>
+          <horizontal>
+            <vertical v-html="event?.description"></vertical>
+            <vertical v-html="page?.content"></vertical>
+          </horizontal>
+        </vertical>
+        <template #top-left>
+          <a href="https://elektron.art"><icon-left /></a>
+        </template>
+        <template #top-right>
+          <theme-button />
+        </template>
+      </layout>
+    </div>
+    <script type="module">
+      import {
+        createElektronApp,
+        computed,
+        events,
+        loadEvents,
+        loadPages,
+        pages,
+        formatStreamUrl,
+      } from "https://elektron.art/lib/art.es.js";
+
+      createElektronApp({
+        setup() {
+          loadEvents();
+          loadPages();
+          const eventid = "ruumiantropoloogiad";
+          const event = computed(() =>
+            events.value.find((event) => event.eventid === eventid)
+          );
+          const page = computed(() =>
+            pages.value.find((page) => page.pageid === eventid)
+          );
+          return { eventid, event, page, formatStreamUrl };
+        },
+      }).mount("#app");
+    </script>
+  </body>
+</html>
